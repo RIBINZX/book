@@ -153,14 +153,23 @@
 
         </div>
 
-        <a href="{% static 'web/assets/Moksh About page.pdf' %}" class="pdf-download-button"><button>Download PDF</button></a>
+
+        
         
         </div>
+
+        <div id="pdf">
+            <a href="{% static 'web/assets/Moksh About page.pdf' %}" download class="pdf-download-button"><button><h2>Download PDF</h2> </button></a>
+            <a href="{% static 'web/assets/Moksh About page.pdf' %}"  class="pdf-download-button"><button><h2>open now</h2> </button></a>
+        </div>
   
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.min.js"></script>
+
 
 
         <button class="open-overlay-button">Open Overlay</button>
+
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.min.js"></script>
 
 <div id="overlay" class="overlay">
   <div class="overlay-content">
@@ -218,6 +227,10 @@
   .close-overlay-button:hover {
     background-color: #0056b3;
   }
+  #pdf{
+    display:flex;
+    flex-direction:column;
+  }
 </style>
 
 <script>
@@ -253,14 +266,20 @@ font-size:20px;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        background-color: #fff;
+        background-color: #000;
         padding: 20px;
         border-radius: 5px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        color:#fff;
     }
     form#comment-form {
         display: flex;
         justify-content: center;
+    }
+    #add_comment{
+        background: #007bff;
+    color: white;
+    padding: 5px;
     }
 </style>
 
@@ -272,7 +291,7 @@ font-size:20px;
 <form id="comment-form" method="POST" action="{% url 'web:shop_details' product.id %}">
     {% csrf_token %}
     <input id="comment" name="comment" placeholder="Comment here" type="text">
-    <button type="submit">Add Comment</button>
+    <button id="add_comment" type="submit">Add Comment</button>
 </form>
 {% else %}
 <input id="comment" name="comment" placeholder="please login after Comment here" type="text" disabled>
