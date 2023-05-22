@@ -12,19 +12,28 @@ from django.http import JsonResponse
 
 
 
+from django.contrib.auth.decorators import login_required
+
+from django.http import JsonResponse
 
 def shop_details(request, id):
     product = get_object_or_404(Product, id=id)
 
     if request.method == 'POST':
-        comment_content = request.POST.get('comment')
-        comment = Comment(content=comment_content, product=product)  # Assuming the comment model has a ForeignKey to the product
-        comment.save()
-        return JsonResponse({'success': True, 'comment': {'content': comment_content}})
+        print(request.user.is_authenticated)  # Debug statement
+        if request.method == 'POST':
+            comment_content = request.POST.get('comment')
+            comment = Comment(content=comment_content, product=product)  # Assuming the comment model has a ForeignKey to the product
+            comment.save()
+            return JsonResponse({'success': True, 'comment': {'content': comment_content}})
+        else:
+            return JsonResponse({'success': False, 'message': 'Authentication required'})
 
     comments = Comment.objects.filter(product=product)
     context = {"product": product, 'comments': comments}
     return render(request, "web/shop-detail.html", context)
+
+
     
 
 
@@ -91,3 +100,6 @@ def login_1(request,):
 
 
 
+def logout_view(request):
+    logout(request)
+    return redirect('web:shop')
