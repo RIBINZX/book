@@ -18,8 +18,9 @@ def shop_details(request, id):
 
     if request.method == 'POST':
         comment_content = request.POST.get('comment')
-        comment = Comment(content=comment_content, product=product)
+        comment = Comment(content=comment_content, product=product)  # Assuming the comment model has a ForeignKey to the product
         comment.save()
+        return JsonResponse({'success': True, 'comment': {'content': comment_content}})
 
     comments = Comment.objects.filter(product=product)
     context = {"product": product, 'comments': comments}

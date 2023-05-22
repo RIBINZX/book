@@ -872,7 +872,7 @@
     }
 </style>
 
-<form id="comment-form" method="POST" action="">
+<form id="comment-form" method="POST" action="{% url 'web:shop_details' product.id %}">
     {% csrf_token %}
     <input id="comment" name="comment" placeholder="Comment here" type="text">
     <button type="submit">Add Comment</button>
