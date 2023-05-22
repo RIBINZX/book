@@ -248,18 +248,20 @@
 <br><br><br>
 
 <style>
-    #comment{width:50%;}
-    #comment_section{
+    #comment{ 
+        width: 50%;
+        height: 66px;}
+    {% comment %} #comment_section{
         height: 200px;
         overflow-y:scroll;
-        padding: 5px 50px 30px;
-        background-color: gray;
-        color:white;
+        padding: 5px 50px 0px;
+        
+        margin-bottom: 30px;
     }
     #comment_section p{
 color:black;
 font-size:20px;
-    }
+    } {% endcomment %}
     .popup-message {
         display: none;
         position: fixed;
@@ -281,11 +283,48 @@ font-size:20px;
     color: white;
     padding: 5px;
     }
+    {% comment %} #comments-container{
+        background-color: gray;padding-left:20px;
+    } {% endcomment %}
+    #h1cmnt{
+        text-align:center;
+    }
+    #dsblcmnt{
+        display: flex;
+        justify-content: center;
+    }
+    #comment_section {
+        margin-top: 20px;
+    }
+
+    #comments-container {
+        background-color: #f5f5f5;
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    #cmntbrd {
+        margin-bottom: 10px;
+        padding: 10px;
+        background-color: #ffffff;
+        border: 1px solid #e0e0e0;
+        border-radius: 5px;
+    }
+
+    #cmntbrd p:first-child {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    #cmntbrd p:last-child {
+        margin-bottom: 0;
+    }
+    
 </style>
 
 
 
-
+<h1 id="h1cmnt">Comments</h1>
 
 {% if user.is_authenticated %}
 <form id="comment-form" method="POST" action="{% url 'web:shop_details' product.id %}">
@@ -294,10 +333,11 @@ font-size:20px;
     <button id="add_comment" type="submit">Add Comment</button>
 </form>
 {% else %}
-<input id="comment" name="comment" placeholder="please login after Comment here" type="text" disabled>
-
+<div id="dsblcmnt">
+    <input id="comment" name="comment" placeholder="Please login to comment" type="text" disabled>
+    <a href="{% url 'web:login' %}"><button id="add_comment" type="">Login</button></a>
+</div>
 {% endif %}
-
 
 <div id="popup-message" class="popup-message">
     Comment added successfully!
@@ -307,10 +347,13 @@ font-size:20px;
 
 <div id="comment_section">
     <div id="comments-container">
-        {% for comment in comments reversed %}
-            {% if comment.product == product %}
-                <p>{{ comment.content }}</p>
-            {% endif %}
+        {% for comment in comments %}
+        {% if comment.product == product %}
+        <div id="cmntbrd">
+            <p>{{ comment.user.username }}</p>
+            <p>{{ comment.content }}</p>
+        </div>
+        {% endif %}
         {% endfor %}
     </div>
 </div>
@@ -318,9 +361,9 @@ font-size:20px;
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    $(document).ready(function() {
-        $('#comment-form').submit(function(event) {
-            event.preventDefault(); // Prevent form submission
+    $(document).ready(function () {
+        $('#comment-form').submit(function (event) {
+            event.preventDefault();
             var commentContent = $('#comment').val();
             $.ajax({
                 url: $(this).attr('action'),
@@ -329,18 +372,21 @@ font-size:20px;
                     'comment': commentContent,
                     'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
                 },
-                success: function(response) {
+                success: function (response) {
                     if (response.success) {
-                        $('#comment').val(''); // Clear the comment input
-                        $('#popup-message').fadeIn().delay(2000).fadeOut(); // Show popup message for 2 seconds
-                        // Append the new comment to the comments container
-                        $('#comments-container').append('<p>' + response.comment.content + '</p>');
+                        $('#comment').val('');
+                        var newComment = '<div id="cmntbrd"><p>' + response.username + '</p><p>' + response.comment + '</p></div>';
+                        $('#comments-container').prepend(newComment); // Prepend the new comment
+                        $('#popup-message').fadeIn().delay(2000).fadeOut(); // Show popup message
                     }
                 }
             });
         });
     });
+    
 </script>
+
+
 
 
 

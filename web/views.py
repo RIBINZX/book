@@ -20,18 +20,21 @@ def shop_details(request, id):
     product = get_object_or_404(Product, id=id)
 
     if request.method == 'POST':
-        print(request.user.is_authenticated)  # Debug statement
-        if request.method == 'POST':
+        if request.user.is_authenticated:
             comment_content = request.POST.get('comment')
-            comment = Comment(content=comment_content, product=product)  # Assuming the comment model has a ForeignKey to the product
-            comment.save()
-            return JsonResponse({'success': True, 'comment': {'content': comment_content}})
+            if comment_content and comment_content.strip():
+                comment = Comment(content=comment_content, product=product, user=request.user)
+                comment.save()
+                return JsonResponse({'success': True, 'username': request.user.username, 'comment': comment_content})
+            else:
+                return JsonResponse({'success': False, 'message': 'Comment cannot be empty.'})
         else:
             return JsonResponse({'success': False, 'message': 'Authentication required'})
 
     comments = Comment.objects.filter(product=product)
     context = {"product": product, 'comments': comments}
     return render(request, "web/shop-detail.html", context)
+
 
 
     
